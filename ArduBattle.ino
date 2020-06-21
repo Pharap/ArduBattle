@@ -66,7 +66,9 @@ void updateTitleScreen()
 
 void drawTitleScreen()
 {
-  arduboy.print(F("ArduBattle 1943"));
+  Sprites::drawOverwrite(6, 8, titleScreen, 0);
+  arduboy.setCursor(15,30);
+  arduboy.print(F("Press A to Start"));
 }
 
 //GamePlay
