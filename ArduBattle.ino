@@ -3,6 +3,7 @@ Arduboy2 arduboy;
 
 #include "characterPlane.h"
 #include "TitleScreen.h"
+#include "characterBullet.h"
 
 enum class GameState
 {
@@ -13,6 +14,7 @@ enum class GameState
 GameState gameState = GameState::TitleScreen;
 
 //Variables
+unsigned int frame;
 int characterPlaneX;
 int characterPlaneY;
 int characterBulletX;
@@ -66,14 +68,17 @@ void updateTitleScreen()
 
 void drawTitleScreen()
 {
-  Sprites::drawOverwrite(6, 8, titleScreen, 0);
-  arduboy.setCursor(15,30);
+  Sprites::drawOverwrite(6, 14, titleScreen, 0);
+  arduboy.setCursor(17,35);
   arduboy.print(F("Press A to Start"));
 }
 
 //GamePlay
 void updateGamePlay()
 {
+  ++frame;
+  if(frame>200) frame = 0;
+  
   updateCharacterPlane();
 }
 
@@ -115,12 +120,15 @@ void updateCharacterBullet()
   characterBulletY = characterPlaneY - 2;
   
   if(arduboy.pressed(A_BUTTON)) {
-    --characterBulletY;
     drawCharacterBullet();
   }
 }
 
 void drawCharacterBullet()
 {
-  arduboy.drawLine(characterBulletX,characterBulletY,characterBulletX,characterBulletY,WHITE);
+  if(frame%5) {
+    Sprites::drawOverwrite(characterBulletWidth, characterBulletHeight, characterBullet, 0);
+  } else {
+    
+  }
 }
