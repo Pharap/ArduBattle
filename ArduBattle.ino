@@ -14,7 +14,6 @@ enum class GameState
 GameState gameState = GameState::TitleScreen;
 
 //Variables
-unsigned int frame;
 int characterPlaneX;
 int characterPlaneY;
 int characterBulletX;
@@ -75,10 +74,7 @@ void drawTitleScreen()
 
 //GamePlay
 void updateGamePlay()
-{
-  ++frame;
-  if(frame>200) frame = 0;
-  
+{ 
   updateCharacterPlane();
 }
 
@@ -116,8 +112,8 @@ void drawCharacterPlane()
 //Character Bullet
 void updateCharacterBullet()
 {
-  characterBulletX = characterPlaneX + 9;
-  characterBulletY = characterPlaneY - 2;
+  characterBulletX = characterPlaneX + 7;
+  characterBulletY = characterPlaneY - 8;
   
   if(arduboy.pressed(A_BUTTON)) {
     drawCharacterBullet();
@@ -126,9 +122,7 @@ void updateCharacterBullet()
 
 void drawCharacterBullet()
 {
-  if(frame%5) {
-    Sprites::drawOverwrite(characterBulletWidth, characterBulletHeight, characterBullet, 0);
-  } else {
-    
+  if(arduboy.everyXFrames(6)) {
+    Sprites::drawOverwrite(characterBulletX, characterBulletY, characterBullet, 0);
   }
 }
