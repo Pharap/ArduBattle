@@ -4,6 +4,7 @@ Arduboy2 arduboy;
 #include "characterPlane.h"
 #include "TitleScreen.h"
 #include "characterBullet.h"
+#include "characterPlaneFlash.h"
 
 enum class GameState
 {
@@ -19,17 +20,19 @@ int characterPlaneY;
 int characterBulletX;
 int characterBulletY;
 
+int cursor_x;
+int cursor_y;
+
 void reset()
 {
-  characterPlaneX = 45;
-  characterPlaneY =  30;
-  characterBulletX = characterPlaneX + 23;
-  characterBulletY = characterPlaneY - 2;
+  characterPlaneX = 55;
+  characterPlaneY =  35;
+  characterBulletX = characterPlaneX + 10;
+  characterBulletY = characterPlaneY - 15;
 }
 
 void setup() {
   arduboy.begin();
-  arduboy.clear();
   reset();
 
 }
@@ -97,11 +100,30 @@ void drawGameOver()
 //Character
 void updateCharacterPlane()
 {
+  characterBulletX = characterPlaneX + 9;
+  characterBulletY = characterPlaneY - 15;
+  
   if(arduboy.pressed(LEFT_BUTTON)) --characterPlaneX;
   if(arduboy.pressed(RIGHT_BUTTON)) ++characterPlaneX;
   if(arduboy.pressed(UP_BUTTON)) --characterPlaneY;
   if(arduboy.pressed(DOWN_BUTTON)) ++characterPlaneY;
   updateCharacterBullet();
+  updatePlaneCollision();
+
+  arduboy.setCursor(characterPlaneX, characterPlaneY);
+  cursor_x = arduboy.getCursorX();
+  {
+    arduboy.setCursor(74,0);
+    arduboy.print(F("x:"));
+    arduboy.print(cursor_x);
+  }
+  arduboy.setCursor(characterPlaneX, characterPlaneY);
+  cursor_y = arduboy.getCursorY();
+  {
+    arduboy.setCursor(105,0);
+    arduboy.print(F("y:"));
+    arduboy.print(cursor_y);
+  }
 }
 
 void drawCharacterPlane()
@@ -111,18 +133,30 @@ void drawCharacterPlane()
 
 //Character Bullet
 void updateCharacterBullet()
-{
-  characterBulletX = characterPlaneX + 7;
-  characterBulletY = characterPlaneY - 8;
-  
+{ 
   if(arduboy.pressed(A_BUTTON)) {
+    if(characterBulletY > 0) --characterBulletY;
+    drawPlaneBulletFlash();
     drawCharacterBullet();
   }
 }
 
 void drawCharacterBullet()
 {
+  Sprites::drawOverwrite(characterBulletX, characterBulletY, characterBullet, 0);
+}
+
+void drawPlaneBulletFlash()
+{
   if(arduboy.everyXFrames(6)) {
-    Sprites::drawOverwrite(characterBulletX, characterBulletY, characterBullet, 0);
+    Sprites::drawOverwrite(characterPlaneX + 7, characterPlaneY - 8, characterPlaneFlash, 0);
   }
+}
+
+void updatePlaneCollision()
+{
+  if(characterPlaneX > 109) --characterPlaneX;
+  if(characterPlaneX < 0) ++characterPlaneX;
+  if(characterPlaneY > 51) --characterPlaneY;
+  if(characterPlaneY < 0) ++characterPlaneY;
 }

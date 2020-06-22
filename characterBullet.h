@@ -1,15 +1,15 @@
-// 'Bullet', 5x7px
+// 'Bullet', 1x2px
 #pragma once
 
 #include <stdint.h>
 
-constexpr uint8_t characterBulletWidth = 5;
-constexpr uint8_t characterBulletHeight = 7;
+constexpr uint8_t characterBulletWidth = 1;
+constexpr uint8_t characterBulletHeight = 2;
 
 const unsigned char characterBullet[] PROGMEM = {
   // Dimensions
   characterBulletWidth, characterBulletHeight,
 
   // Frame 0 - characterBullet
-  0x10, 0x60, 0x7e, 0x60, 0x10,
+  0xc0,
 };
