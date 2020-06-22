@@ -20,6 +20,8 @@ int characterPlaneY;
 int characterBulletX;
 int characterBulletY;
 
+bool bulletFired;
+
 int cursor_x;
 int cursor_y;
 
@@ -29,6 +31,7 @@ void reset()
   characterPlaneY =  35;
   characterBulletX = characterPlaneX + 10;
   characterBulletY = characterPlaneY - 15;
+  bulletFired = false;
 }
 
 void setup() {
@@ -104,9 +107,20 @@ void updateCharacterPlane()
   if(arduboy.pressed(RIGHT_BUTTON)) ++characterPlaneX;
   if(arduboy.pressed(UP_BUTTON)) --characterPlaneY;
   if(arduboy.pressed(DOWN_BUTTON)) ++characterPlaneY;
-  updateCharacterBullet();
   updatePlaneCollision();
   PlaneTracker();
+  updateCharacterBullet();
+
+  //Bullet Fired
+  if(bulletFired)
+  {
+    arduboy.setCursor(0,0);
+    arduboy.print(F("True"));
+  }
+  if(!bulletFired) {
+    arduboy.setCursor(0,0);
+    arduboy.print(F("False"));
+  }
 }
 
 void PlaneTracker()
@@ -129,22 +143,31 @@ void drawCharacterPlane()
 void updateCharacterBullet()
 { 
   if(arduboy.pressed(A_BUTTON)) {
-    drawPlaneBulletFlash();
     drawCharacterBullet();
+    bulletFired = true;
+    --characterBulletY;
+  } else {
+    bulletFired = false;
   }
   if(arduboy.justPressed(A_BUTTON)) {
-    characterBulletFired();
+    drawPlaneBulletFlash();
   }
-  if(characterBulletY > 0)
+  if(characterBulletY > -5 && bulletFired)
   {
+    bulletFired = true;
+    drawCharacterBullet();
     --characterBulletY;
+  }
+  if (characterBulletY <= -5 && !bulletFired) {
+    bulletFired = false;
+    characterBulletFired();
   }
 }
 
 void characterBulletFired()
 {
   characterBulletX = characterPlaneX + 9;
-  characterBulletY = characterPlaneY - 15;
+  characterBulletY = characterPlaneY - 5;
 }
 
 void drawCharacterBullet()
@@ -154,9 +177,7 @@ void drawCharacterBullet()
 
 void drawPlaneBulletFlash()
 {
-  if(arduboy.everyXFrames(6)) {
-    Sprites::drawOverwrite(characterPlaneX + 7, characterPlaneY - 8, characterPlaneFlash, 0);
-  }
+  Sprites::drawOverwrite(characterPlaneX + 7, characterPlaneY - 8, characterPlaneFlash, 0);
 }
 
 void updatePlaneCollision()
