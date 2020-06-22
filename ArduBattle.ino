@@ -88,15 +88,8 @@ void updateGamePlay()
   updatePlaneCollision();
   
   //Bullet Fired
-  if(bulletFired)
-  {
-    arduboy.setCursor(0,0);
-    arduboy.print(F("True"));
-  }
-  if(!bulletFired) {
-    arduboy.setCursor(0,0);
-    arduboy.print(F("False"));
-  }
+  arduboy.setCursor(0,0);
+  arduboy.print(bulletFired ? F("True") : F("False"));
 }
 
 void drawGamePlay()
@@ -145,29 +138,29 @@ void drawCharacterPlane()
 //Character Bullet
 void updateCharacterBullet()
 { 
-  if(arduboy.pressed(A_BUTTON) && !bulletFired) {
-    bulletFired = true;
-    --characterBulletY;
-    characterBulletFired();
-  } else {
-    bulletFired = false;
-  }
-  if(arduboy.pressed(A_BUTTON) && bulletFired)
-    drawPlaneBulletFlash();
-    if(characterBulletY > maxBulletDistance)
+  if(arduboy.pressed(A_BUTTON))
+  {
+    if(bulletFired)
     {
-      characterBulletY -= 5;
-      bulletFired = true;
+      drawPlaneBulletFlash();
     }
-  if(characterBulletY < maxBulletDistance){
-    bulletFired = false;
+    else
+    {
+      fireBullet();
+    }
   }
+
+  if(characterBulletY > maxBulletDistance)
+    characterBulletY -= 5;
+  else
+    bulletFired = false;
 }
 
-void characterBulletFired()
+void fireBullet()
 {
   characterBulletX = characterPlaneX + 9;
   characterBulletY = characterPlaneY - 6;
+  bulletFired = true;
 }
 
 void drawCharacterBullet()
