@@ -142,26 +142,25 @@ void drawCharacterPlane()
 //Character Bullet
 void updateCharacterBullet()
 { 
-  if(arduboy.pressed(A_BUTTON)) {
-    drawCharacterBullet();
-    bulletFired = true;
+  if(arduboy.justPressed(A_BUTTON)) {
     --characterBulletY;
+    drawCharacterBullet();
+    characterBulletFired();
   } else {
     bulletFired = false;
   }
-  if(arduboy.justPressed(A_BUTTON)) {
+  if(arduboy.justPressed(A_BUTTON))
     drawPlaneBulletFlash();
-  }
-  if(characterBulletY > -5 && bulletFired)
-  {
-    bulletFired = true;
-    drawCharacterBullet();
-    --characterBulletY;
-  }
-  if (characterBulletY <= -5 && !bulletFired) {
+    if(characterBulletY > -5)
+    {
+      drawCharacterBullet();
+      --characterBulletY;
+      bulletFired = true;
+    }
+  if(characterBulletY < -5){
     bulletFired = false;
-    characterBulletFired();
   }
+  if(bulletFired) drawCharacterBullet();
 }
 
 void characterBulletFired()
