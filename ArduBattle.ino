@@ -99,31 +99,25 @@ void drawGameOver()
 
 //Character
 void updateCharacterPlane()
-{
-  characterBulletX = characterPlaneX + 9;
-  characterBulletY = characterPlaneY - 15;
-  
+{ 
   if(arduboy.pressed(LEFT_BUTTON)) --characterPlaneX;
   if(arduboy.pressed(RIGHT_BUTTON)) ++characterPlaneX;
   if(arduboy.pressed(UP_BUTTON)) --characterPlaneY;
   if(arduboy.pressed(DOWN_BUTTON)) ++characterPlaneY;
   updateCharacterBullet();
   updatePlaneCollision();
+  PlaneTracker();
+}
 
-  arduboy.setCursor(characterPlaneX, characterPlaneY);
-  cursor_x = arduboy.getCursorX();
-  {
-    arduboy.setCursor(74,0);
-    arduboy.print(F("x:"));
-    arduboy.print(cursor_x);
-  }
-  arduboy.setCursor(characterPlaneX, characterPlaneY);
-  cursor_y = arduboy.getCursorY();
-  {
-    arduboy.setCursor(105,0);
-    arduboy.print(F("y:"));
-    arduboy.print(cursor_y);
-  }
+void PlaneTracker()
+{
+  arduboy.setCursor(74,0);
+  arduboy.print(F("x:"));
+  arduboy.print(characterPlaneX);
+
+  arduboy.setCursor(105,0);
+  arduboy.print(F("y:"));
+  arduboy.print(characterPlaneY);
 }
 
 void drawCharacterPlane()
@@ -135,10 +129,22 @@ void drawCharacterPlane()
 void updateCharacterBullet()
 { 
   if(arduboy.pressed(A_BUTTON)) {
-    if(characterBulletY > 0) --characterBulletY;
     drawPlaneBulletFlash();
     drawCharacterBullet();
   }
+  if(arduboy.justPressed(A_BUTTON)) {
+    characterBulletFired();
+  }
+  if(characterBulletY > 0)
+  {
+    --characterBulletY;
+  }
+}
+
+void characterBulletFired()
+{
+  characterBulletX = characterPlaneX + 9;
+  characterBulletY = characterPlaneY - 15;
 }
 
 void drawCharacterBullet()
