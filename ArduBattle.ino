@@ -19,6 +19,7 @@ int characterPlaneX;
 int characterPlaneY;
 int characterBulletX;
 int characterBulletY;
+int maxBulletDistance;
 
 bool bulletFired;
 
@@ -82,11 +83,26 @@ void drawTitleScreen()
 void updateGamePlay()
 { 
   updateCharacterPlane();
+  updateCharacterBullet();
+  PlaneTracker();
+  updatePlaneCollision();
+  
+  //Bullet Fired
+  if(bulletFired)
+  {
+    arduboy.setCursor(0,0);
+    arduboy.print(F("True"));
+  }
+  if(!bulletFired) {
+    arduboy.setCursor(0,0);
+    arduboy.print(F("False"));
+  }
 }
 
 void drawGamePlay()
 {
   drawCharacterPlane();
+  drawCharacterBullet();
 }
 
 //GameOver
@@ -107,20 +123,7 @@ void updateCharacterPlane()
   if(arduboy.pressed(RIGHT_BUTTON)) ++characterPlaneX;
   if(arduboy.pressed(UP_BUTTON)) --characterPlaneY;
   if(arduboy.pressed(DOWN_BUTTON)) ++characterPlaneY;
-  updatePlaneCollision();
-  PlaneTracker();
-  updateCharacterBullet();
-
-  //Bullet Fired
-  if(bulletFired)
-  {
-    arduboy.setCursor(0,0);
-    arduboy.print(F("True"));
-  }
-  if(!bulletFired) {
-    arduboy.setCursor(0,0);
-    arduboy.print(F("False"));
-  }
+  maxBulletDistance = characterPlaneY - 55;
 }
 
 void PlaneTracker()
@@ -142,23 +145,21 @@ void drawCharacterPlane()
 //Character Bullet
 void updateCharacterBullet()
 { 
-  if(arduboy.justPressed(A_BUTTON) && !bulletFired) {
+  if(arduboy.pressed(A_BUTTON) && !bulletFired) {
     bulletFired = true;
     --characterBulletY;
-    drawCharacterBullet();
     characterBulletFired();
   } else {
     bulletFired = false;
   }
-  if(arduboy.justPressed(A_BUTTON))
+  if(arduboy.pressed(A_BUTTON) && bulletFired)
     drawPlaneBulletFlash();
-    if(characterBulletY > -5)
+    if(characterBulletY > maxBulletDistance)
     {
-      drawCharacterBullet();
-      --characterBulletY;
+      characterBulletY -= 5;
       bulletFired = true;
     }
-  if(characterBulletY < -5){
+  if(characterBulletY < maxBulletDistance){
     bulletFired = false;
   }
 }
@@ -166,7 +167,7 @@ void updateCharacterBullet()
 void characterBulletFired()
 {
   characterBulletX = characterPlaneX + 9;
-  characterBulletY = characterPlaneY - 5;
+  characterBulletY = characterPlaneY - 6;
 }
 
 void drawCharacterBullet()
